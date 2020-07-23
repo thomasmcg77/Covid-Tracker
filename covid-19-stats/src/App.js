@@ -9,25 +9,35 @@ import {
 import InfoBox from "./InfoBox";
 import Map from "./Map";
 import './App.css';
+import Table from "./Table";
 
 function App() {
   const [countries, setCountries] = useState([]);
-  const [country, setCountry] = useState(["worldwide"])
+  const [country, setCountry] = useState(["worldwide"]);
+  const [countryInfo, setCountryInfo] = useState({});
+  const [tableData, setTableData] = useState({});
 
-  // https://disease.sh/v3/covid-19/countries
+  useEffect(() => {
+    fetch('https://disease.sh/v3/covid-19/all')
+      .then(response => response.json())
+      .then((data) => {
+        setCountryInfo(data);
+      })
+  }, []);
 
   useEffect(() => {
     const getCountriesData = async () => {
       await fetch("https://disease.sh/v3/covid-19/countries")
-      .then((response) => response.json())
-      .then((data) => {
-        const countries = data.map((country) => (
-          {
-            name: country.country,
-            value: country.countryInfo.iso2
-          }
-        ));
+        .then((response) => response.json())
+        .then((data) => {
+          const countries = data.map((country) => (
+            {
+              name: country.country,
+              value: country.countryInfo.iso2
+            }
+          ));
 
+        setTableData(data);
         setCountries(countries);
       });
     };
@@ -37,8 +47,20 @@ function App() {
 
   const onCountryChange = async (event) => {
     const countryCode = event.target.value;
-    setCountry(countryCode);
+
+    const url = countryCode === 'worldwide' ? 'https://disease.sh/v3/covid-19/all' : `https://disease.sh/v3/covid-19/countries/${countryCode}`;
+
+    await fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        setCountry(countryCode);
+
+        //All data from country
+        setCountryInfo(data);
+      })
   };
+
+  console.log('COUNTRY INFO >>>', countryInfo);
 
   return (
     <div className="app">
@@ -58,11 +80,11 @@ function App() {
         </div>
 
         <div className="app__stats">
-          <InfoBox title="COVID-19 Cases" cases={123} total={2000} />
+          <InfoBox title="COVID-19 Cases" cases={countryInfo.todayCases} total={countryInfo.cases} />
 
-          <InfoBox title="Recovered" cases={1234} total={3000}/>
+          <InfoBox title="Recovered" cases={countryInfo.todayRecovered} total={countryInfo.recovered}/>
 
-          <InfoBox title="Deaths" cases={12345} total={4000} />
+          <InfoBox title="Deaths" cases={countryInfo.todayDeaths} total={countryInfo.deaths} />
         </div>
 
         {/* Table */}
@@ -74,7 +96,8 @@ function App() {
       <Card className="app__right">
         <CardContent>
           <h3>Live cases per country</h3>
-          {/* Table */}
+          {console.log(tableData)}
+          <Table countries={tableData} />
           <h3>Worldwide new cases</h3>
           {/* Graph */}
         </CardContent>
