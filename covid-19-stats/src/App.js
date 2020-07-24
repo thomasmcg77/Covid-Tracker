@@ -15,7 +15,7 @@ function App() {
   const [countries, setCountries] = useState([]);
   const [country, setCountry] = useState(["worldwide"]);
   const [countryInfo, setCountryInfo] = useState({});
-  const [tableData, setTableData] = useState({});
+  const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
     fetch('https://disease.sh/v3/covid-19/all')
@@ -87,10 +87,6 @@ function App() {
           <InfoBox title="Deaths" cases={countryInfo.todayDeaths} total={countryInfo.deaths} />
         </div>
 
-        {/* Table */}
-        {/* Graph */}
-
-        {/* Map */}
         <Map />
       </div>
       <Card className="app__right">
@@ -99,7 +95,6 @@ function App() {
           {console.log(tableData)}
           <Table countries={tableData} />
           <h3>Worldwide new cases</h3>
-          {/* Graph */}
         </CardContent>
       </Card>
     </div>
