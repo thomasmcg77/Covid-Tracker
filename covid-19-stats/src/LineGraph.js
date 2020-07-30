@@ -83,6 +83,31 @@ function LineGraph({ casesType = 'cases', ...props }) {
         return chartData;
     }
 
+    const borderColor = () => {
+        if(casesType === "cases") {
+            return("#CC1034");
+        }
+        else if(casesType === "deaths") {
+            return("#181818");
+        }
+        else {
+            return("#7dd71d")
+        }
+    }
+
+    const backgroundColor = () => {
+        if(casesType === "cases") {
+            return("rgba(204, 16, 52, 0.5)");
+        }
+        else if(casesType === "deaths") {
+            return("rgba(24, 24, 24, 0.5)");
+        }
+        else {
+            return("rgba(125, 215, 29, 0.5)")
+        }
+    }
+    
+
     return (
         <div className={props.className}>
             {data?.length > 0 && (
@@ -91,8 +116,8 @@ function LineGraph({ casesType = 'cases', ...props }) {
                 data={{
                     datasets: [
                         {
-                            backgroundColor: "rgba(204, 16, 52, 0.5)",
-                            borderColor: "#CC1034",
+                            backgroundColor: backgroundColor,
+                            borderColor: borderColor,
                             data: data
                         },
                     ],
